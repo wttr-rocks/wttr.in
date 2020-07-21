@@ -1,4 +1,4 @@
-*wttr.in — the right way to check the weather!*
+*wttr.in — the right way to check the weather!* 😄
 
 wttr.in is a console-oriented weather forecast service that supports various information
 representation methods like terminal-oriented ANSI-sequences for console HTTP clients
