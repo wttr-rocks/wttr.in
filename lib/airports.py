@@ -1,6 +1,7 @@
 import csv
+import os
 
-AIRPORTS_DAT_FILE = '/home/igor/wttrin-geo/share/airports.dat'
+AIRPORTS_DAT_FILE = f"{os.getenv('WTTR_MYDIR')}/airports.dat"
 
 def load_aiports_index():
     file_ = open(AIRPORTS_DAT_FILE, "r")
