@@ -99,7 +99,6 @@ def find_location(location):
     
     if is_airport:
         answer['address'] = shorten_full_address(answer['address'])
-    print(answer)
     if "timezone" not in answer:
        answer = add_timezone_information(answer)
 
