@@ -1,5 +1,4 @@
-*wttr.in — the right way to check the weather!* 😄
-
+# *wttr.in — the right way to check the weather!* 😄
 
 wttr.in is a console-oriented weather forecast service that supports various information
 representation methods like terminal-oriented ANSI-sequences for console HTTP clients
@@ -461,11 +460,11 @@ The language can be set explicitly when using console clients by using command-l
 
 The preferred language can be forced using the `lang` option:
 
-    $ curl wttr.in/Berlin?lang=de
+    curl wttr.in/Berlin?lang=de
 
 The third option is to choose the language using the DNS name used in the query:
 
-    $ curl de.wttr.in/Berlin
+    curl de.wttr.in/Berlin
 
 wttr.in is currently translated into 54 languages, and the number of supported languages is constantly growing.
 
@@ -632,7 +631,7 @@ Then install the project dependencies from pip:
 
 ### Download Geolite2-City DB
 
-GeoLite2 https://www.maxmind.com/en/geolite2/signup for free database access. After registration login to your [account portal](https://www.maxmind.com/en/account/login) and on the left-hand side select `Download Files` under the `GeoIP2 / GeoLite2` section and download/unpack the GeoLite2 City database. Then add the GeoLite2-city.mmdb file to $WTTR_GEOLITE/GeoLite2-City.mmdb
+Download [GeoLite2](https://www.maxmind.com/en/geolite2/signup) for free database access. After registration login to your [account portal](https://www.maxmind.com/en/account/login) and on the left-hand side select `Download Files` under the `GeoIP2 / GeoLite2` section and download/unpack the GeoLite2 City database. Then add the GeoLite2-city.mmdb file to $WTTR_GEOLITE/GeoLite2-City.mmdb
 
 ### Get a WorldWeatherOnline key and configure wego
 
