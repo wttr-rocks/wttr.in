@@ -52,7 +52,7 @@ def load_translations():
     translations = {}
 
     for f_name in PROXY_LANGS:
-        f_name = '/root/app/share/translations/%s.txt' % f_name
+        f_name = f"{MYDIR}/share/translations/{f_name}.txt"
         translation = {}
         lang = f_name.split('/')[-1].split('.', 1)[0]
         with open(f_name, "r") as f_file:

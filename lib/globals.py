@@ -26,8 +26,8 @@ else:
 WEGO = os.environ.get("WTTR_WEGO")
 PYPHOON = os.environ.get("PYPHOON")
 
-_DATADIR = "/root/app/wttr_cache"
-_LOGDIR = "{}/log".format(_DATADIR)
+_DATADIR = f"{MYDIR}/wttr_cache"
+_LOGDIR = f"{_DATADIR}/log"
 
 IP2LCACHE = os.path.join(_DATADIR, "cache/ip2l/")
 PNG_CACHE = os.path.join(_DATADIR, "cache/png")
