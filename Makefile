@@ -1,7 +1,7 @@
 
 # Creates .env template if nonexistent and shows steps to completes before starting the container
 init:
-	@./setup.py
+	@python3 ./setup.py
 
 # Starts docker container
 run:
