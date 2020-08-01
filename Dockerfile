@@ -1,6 +1,7 @@
 FROM ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
-
+ENV TERM=linux
+ENV TERMINFO=/bin/bash
 ########################################## INSTALL OS DEPENDENCIES ##########################################
 
 RUN apt-get update &&       \
@@ -100,8 +101,8 @@ RUN go install github.com/schachmat/wego
 RUN git clone https://github.com/chubin/pyphoon.git $PYPHOON_ROOT   && \
     pip install $PYPHOON_ROOT
 
-# Install project python dependencies
-RUN pip install -r $WTTR_MYDIR/requirements.txt
+# Install project python dependencies (frozen dependencies)
+RUN pip install -r $WTTR_MYDIR/requirements-froze.txt
 
 # Create and configure supervisor
 RUN mkdir -p /var/log/supervisor                                    && \
@@ -113,7 +114,8 @@ COPY ./share/docker/supervisord.conf /etc/supervisor/supervisord.conf
 # Expose port to host 
 EXPOSE $WTTR_LISTEN_PORT
 
+WORKDIR $WTTR_MYDIR
 ########################################## START ##########################################
 
 # Startup command
-CMD ["/usr/local/bin/supervisord"]
+CMD ["/bin/bash", "-c", "supervisord"]

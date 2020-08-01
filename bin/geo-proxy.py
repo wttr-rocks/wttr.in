@@ -14,6 +14,7 @@ MYDIR = os.path.abspath(
     os.path.dirname(os.path.dirname(__file__)))
 sys.path.append("%s/lib/" % MYDIR)
 
+
 from globals import GEO_PROXY_CACHEDIR
 from flask import Flask, request, render_template, send_from_directory, send_file, make_response, jsonify, Response
 app = Flask(__name__)
