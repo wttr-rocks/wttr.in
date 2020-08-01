@@ -1,25 +1,23 @@
-#!/usr/bin/python3
 import os
+import shutil
 
-SHARE_ROOT = os.path.dirname(
-    os.path.dirname(
-        os.path.abspath(__file__)
-    )
+ROOT_DIR = os.path.dirname(
+	os.path.abspath(__file__)
 )
 
 ENV_TEMPLATE_FILE = os.path.join(
-    SHARE_ROOT,
-    'docker/.env.template'
+    ROOT_DIR,
+    'share/docker/.env.template'
 )
 
 ENV_FILE = os.path.join(
-     SHARE_ROOT,
-    '../.env'
+     ROOT_DIR,
+    '.env'
 )
 
 # Check if .env exists and if not create using template from WTTR_MYDIR/docker/.env.template
 if 	not os.path.exists( ENV_FILE ):
-	proc = os.popen(f"cp {ENV_TEMPLATE_FILE} {ENV_FILE}")
+	shutil.copyfile(ENV_TEMPLATE_FILE, ENV_FILE)
 else:
 	print("Project has already been initialized.")
 	exit()

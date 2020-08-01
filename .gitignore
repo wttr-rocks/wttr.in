@@ -10,3 +10,4 @@ cache
 GeoLite2-City.mmdb
 .env
 __pycache__
+.history

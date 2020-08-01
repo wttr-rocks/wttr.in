@@ -31,7 +31,6 @@ import cyrtranslit
 from flask import Flask, request
 APP = Flask(__name__)
 
-
 MYDIR = os.path.abspath(
     os.path.dirname(os.path.dirname(__file__)))
 sys.path.append("%s/lib/" % MYDIR)
@@ -52,7 +51,10 @@ def load_translations():
     translations = {}
 
     for f_name in PROXY_LANGS:
-        f_name = f"{MYDIR}/share/translations/{f_name}.txt"
+        f_name = os.path.join(
+            MYDIR,
+            f"share/translations/{f_name}.txt"
+        )
         translation = {}
         lang = f_name.split('/')[-1].split('.', 1)[0]
         with open(f_name, "r") as f_file:
