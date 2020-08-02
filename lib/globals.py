@@ -30,7 +30,7 @@ _DATADIR = f"{MYDIR}/wttr_cache"
 _LOGDIR = f"{_DATADIR}/log"
 
 IP2LCACHE = os.path.join(_DATADIR, "cache/ip2l/")
-PNG_CACHE = os.path.join(_DATADIR, "cache/png")
+PNG_CACHE = os.path.join(_DATADIR, "cache/png/")
 LRU_CACHE = os.path.join(_DATADIR, "cache/lru")
 
 LOG_FILE = os.path.join(_LOGDIR, 'main.log') 
@@ -97,6 +97,13 @@ _WWO_KEY_FILE = os.environ.get(
 WWO_KEY = "key-is-not-specified"
 if os.path.exists(_WWO_KEY_FILE):
     WWO_KEY = open(_WWO_KEY_FILE, 'r').read().strip()
+
+_OWM_KEY_FILE = os.environ.get(
+    "WTTR_OWM_KEY_FILE",
+    os.environ['HOME'] + '/.owm.key')
+OWM_KEY = "key-is-not-specified"
+if os.path.exists(_OWM_KEY_FILE):
+    OWM_KEY = open(_OWM_KEY_FILE, 'r').read().strip()
 
 def error(text):
     "log error `text` and raise a RuntimeError exception"

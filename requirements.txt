@@ -24,3 +24,5 @@ emoji
 grapheme
 psutil
 lolcat
+pyowm
+image-to-ascii-converter
