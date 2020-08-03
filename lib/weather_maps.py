@@ -4,6 +4,7 @@
 
 import os
 from datetime import datetime
+from glob import glob
 import time
 import json
 import requests
@@ -16,6 +17,9 @@ from pyowm.tiles.enums import MapLayerEnum
 from sketchingdev.image_to_ascii import converter
 
 from globals import OWM_KEY, PNG_CACHE
+
+# Time limit to store cached images in minutes
+CACHED_TIME_LIMIT = 30
 
 # Version 1 of the OpenWeatherMaps Maps API
 
@@ -84,21 +88,32 @@ class WeatherMaps:
         return None
 
     # Method to check if cache exists and is not outdated
-    def check_cache(self, image, layer):
-        with os.scandir(PNG_CACHE) as dir:
-            for _file in dir:
-                if _file.name.endswith(".png") and _file.is_file() and image in _file.name and layer in _file.name:
-                    cached_date = float(_file.name.split("_")[2])
-                    current_date = float(self.get_timestamp())
-                    # Only reload new cache every 30 minutes or so. Can be changed for different API tiers.
-                    if ((current_date - cached_date) / 60) > 30:
-                        print("weather map cache: Outdated.")
-                        # Remove outdated cache
-                        os.remove(_file)
-                        return None
-                    else:
-                        print("weather map cache: Found.")
-                        return open(_file, "rb")
+    def check_cache(self, location, layer):
+        # Construct map cache path using wildcard for timestamp matching
+        cached_image_path = os.path.join(
+            PNG_CACHE,
+            location + "_*_" + layer + "_.png"
+        )
+
+        # test if path exists, will be empty list if nonexistent
+        cached_image = glob(cached_image_path)
+        
+        # If the cache exists, check if it is outdated or if it can be used
+        if len(cached_image) > 0 and os.path.isfile(cached_image[0]):
+            cached_image_path = cached_image[0]
+            _file = cached_image_path.split("/")[-1]
+            cached_date = float(_file.split("_")[2])
+            current_date = float(self.get_timestamp())
+
+            # Only reload new cache every 30 minutes or so. Can be changed for different API tiers.
+            if ((current_date - cached_date) / 60) > 1:
+                print("Weather map cache: Outdated.")
+                # Remove outdated cache
+                os.remove(cached_image_path)
+                return None
+            else:
+                print("Weather map cache: Found.")
+                return open(cached_image_path, "rb")
         # No cache found
         return None
 
