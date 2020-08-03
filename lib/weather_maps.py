@@ -30,7 +30,13 @@ class WeatherMaps:
     def get_weather_map(self, location, layer, convert=False):
         # convert layer parameter to enum key
         _layer = self.get_map_layer(layer)
+
+        if _layer is None: 
+            return f"Map Layer: {layer} is not supported"
+
+        # Default zoom
         _zoom = 3
+        
         # Create tile manager object
         tile_manager = self.owm.tile_manager(_layer)
 
@@ -43,7 +49,7 @@ class WeatherMaps:
         tile = tile_manager.get_tile(x_tile, y_tile, _zoom)
 
         # Check for cached map
-        cached_map = self.check_cache(f"{lat}_{lon}")
+        cached_map = self.check_cache(f"{lat}_{lon}", layer)
         if cached_map is not None:
             # If cached map was found, check for ascii conversion before returning
             if convert is True:
@@ -51,8 +57,9 @@ class WeatherMaps:
             return cached_map
 
         # Save image to cache if not found or is outdated
-        saved_file = file(
-            self.save_cache(tile_manager, f"{lat}_{lon}")
+        saved_file = open(
+            self.save_cache(tile, f"{lat}_{lon}", layer),
+            "rb"
         )
 
         # Check if conversion to ascii should happen
@@ -77,32 +84,33 @@ class WeatherMaps:
         return None
 
     # Method to check if cache exists and is not outdated
-    def check_cache(self, image):
+    def check_cache(self, image, layer):
         with os.scandir(PNG_CACHE) as dir:
             for _file in dir:
-                if _file.name.endswith(".png") and _file.is_file() and image in _file.name:
-                    cached_date = float(_file.name.split("_")[1])
+                if _file.name.endswith(".png") and _file.is_file() and image in _file.name and layer in _file.name:
+                    cached_date = float(_file.name.split("_")[2])
                     current_date = float(self.get_timestamp())
-
                     # Only reload new cache every 30 minutes or so. Can be changed for different API tiers.
                     if ((current_date - cached_date) / 60) > 30:
-                        print("weather map cache outdated.")
+                        print("weather map cache: Outdated.")
+                        # Remove outdated cache
+                        os.remove(_file)
                         return None
                     else:
-                        print("weather map cache found.")
-                        return file(filename, "rb")
+                        print("weather map cache: Found.")
+                        return open(_file, "rb")
         # No cache found
         return None
 
     # Save weather map for location to cache
-    def save_cache(self, tile_mgr, location):
+    def save_cache(self, tile, location, layer):
         image_path = os.path.join(
             PNG_CACHE,
-            f"{location}_{self.get_timestamp()}_.png"
+            f"{location}_{self.get_timestamp()}_{layer}_.png"
         )
 
         # Save .png
-        tile_mgr.persist( image_path )
+        tile.persist(image_path)
 
         # rerturn image path to retrieve .png
         return image_path

@@ -6,15 +6,15 @@ Main view (wttr.in) implementation.
 The module is a wrapper for the modified Wego program.
 """
 
+from globals import WEGO, NOT_FOUND_LOCATION, DEFAULT_LOCATION, ANSI2HTML, \
+    error, remove_ansi
+from translations import get_message, SUPPORTED_LANGS
 import sys
 import re
-
+from weather_maps import WeatherMaps
 from gevent.subprocess import Popen, PIPE
 
 sys.path.insert(0, "..")
-from translations import get_message, SUPPORTED_LANGS
-from globals import WEGO, NOT_FOUND_LOCATION, DEFAULT_LOCATION, ANSI2HTML, \
-                    error, remove_ansi
 
 
 def get_wetter(parsed_query):
@@ -33,15 +33,17 @@ def get_wetter(parsed_query):
         stdout, stderr, returncode = _wego_wrapper(location, parsed_query)
 
     if location_not_found or \
-        (returncode != 0 \
+        (returncode != 0
             and ('Unable to find any matching weather'
                  ' location to the parsed_query submitted') in stderr):
-            stdout, stderr, returncode = _wego_wrapper(NOT_FOUND_LOCATION, parsed_query)
-            location_not_found = True
-            stdout += get_message('NOT_FOUND_MESSAGE', lang)
+        stdout, stderr, returncode = _wego_wrapper(
+            NOT_FOUND_LOCATION, parsed_query)
+        location_not_found = True
+        stdout += get_message('NOT_FOUND_MESSAGE', lang)
 
     if "\n" in stdout:
-        first_line, stdout = _wego_postprocessing(location, parsed_query, stdout)
+        first_line, stdout = _wego_postprocessing(
+            location, parsed_query, stdout)
     else:
         first_line = ""
 
@@ -51,6 +53,7 @@ def get_wetter(parsed_query):
     if html:
         return _htmlize(stdout, first_line, parsed_query)
     return stdout
+
 
 def _wego_wrapper(location, parsed_query):
     lang = parsed_query['lang']
@@ -76,6 +79,7 @@ def _wego_wrapper(location, parsed_query):
 
     return stdout, stderr, proc.returncode
 
+
 def _wego_postprocessing(location, parsed_query, stdout):
     full_address = parsed_query['full_address']
     lang = parsed_query['lang']
@@ -87,7 +91,6 @@ def _wego_postprocessing(location, parsed_query, stdout):
             stdout = "\n".join(stdout.splitlines()[:17]) + "\n"
         if parsed_query['days'] == '2':
             stdout = "\n".join(stdout.splitlines()[:27]) + "\n"
-
 
     first = stdout.splitlines()[0]
     rest = stdout.splitlines()[1:]
@@ -117,9 +120,20 @@ def _wego_postprocessing(location, parsed_query, stdout):
         lines = [x.rstrip() for x in stdout.splitlines()]
         max_l = max(len(remove_ansi(x)) for x in lines)
         last_line = " "*max_l + "   .\n"
-        stdout = " \n" + "\n".join("  %s  " %x for x in lines) + "\n" + last_line
+        stdout = " \n" + "\n".join("  %s  " %
+                                   x for x in lines) + "\n" + last_line
 
+    # Check if request contains map layer request. Currently only supports: 
+    if "maplayer" in parsed_query:
+        weathermaps = WeatherMaps()
+        stdout += f"\n\nMAP LAYER: {parsed_query['maplayer']}\n"
+        stdout += weathermaps.get_weather_map(
+            parsed_query.get("location"),
+            parsed_query["maplayer"],
+            True
+        ) + "\n\n"
     return first, stdout
+
 
 def _htmlize(ansi_output, title, parsed_query):
     """Return HTML representation of `ansi_output`.
@@ -145,6 +159,7 @@ def _htmlize(ansi_output, title, parsed_query):
     opengraph = _get_opengraph(parsed_query)
     stdout = re.sub("<head>", "<head>" + title + opengraph, stdout)
     return stdout
+
 
 def _get_opengraph(parsed_query):
     """Return OpenGraph data for `parsed_query`"""
