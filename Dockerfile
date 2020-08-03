@@ -78,10 +78,11 @@ COPY . $WTTR_MYDIR
 # Move Geolite DB to root
 RUN mv $WTTR_MYDIR/share/docker/GeoLite2-City.mmdb $HOME/GeoLite2-City.mmdb
 
-# Format IP2 Location API and .wegorc API's and copy to container, along with wwo_key
+# Format IP2 Location API and .wegorc API's and copy to container, along with wwo_key and owm_key
 RUN envsubst < $WTTR_MYDIR/share/docker/.ip2location.key > $HOME/.ip2location.key   && \
     envsubst < $WTTR_MYDIR/share/docker/.wegorc > $HOME/.wegorc                     && \
-    echo $WWO_API >> $HOME/.wwo.key
+    echo $WWO_API >> $HOME/.wwo.key                                                 && \
+    echo $OWM_API >> $HOME/.owm.key
 
 # Download GO
 RUN curl "https://dl.google.com/go/${GO_VERSION}.linux-amd64.tar.gz" | tar -xz -C /usr/local
